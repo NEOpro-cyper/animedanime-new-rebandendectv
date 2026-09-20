@@ -161,7 +161,7 @@ const Watch = async ({ params, searchParams }) => {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: videoJsonLd }}
         />
-        <div className="w-full flex flex-col items-center z-10 relative main-responsive top-[106px]">
+        <div className="w-full flex flex-col items-center z-10 relative main-responsive pt-[106px]">
           <div className="w-full max-w-[96rem]">
             <div className="aspect-video bg-[#1a1a24] rounded-md flex flex-col items-center justify-center text-center p-8">
               <h1 className="text-3xl font-bold text-white mb-3">{MovieInfo.title}</h1>
@@ -179,8 +179,8 @@ const Watch = async ({ params, searchParams }) => {
             </div>
           </div>
         </div>
-        <div className="fixed w-[138.33px] h-[82.25px] left-[1%] top-[2%] bg-[#92b7fc8f] blur-[200px]"></div>
-        <div className="absolute max-[737px]:fixed w-[500px] h-[370.13px] right-[50%] bottom-[-25%] bg-[#576683b4] blur-[215.03px] translate-x-[70%] z-0 rounded-b-[30%]"></div>
+        <div className="fixed pointer-events-none w-[138.33px] h-[82.25px] left-[1%] top-[2%] bg-[#92b7fc8f] blur-[200px]"></div>
+        <div className="absolute max-[737px]:fixed pointer-events-none w-[500px] h-[370.13px] right-[50%] bottom-[-25%] bg-[#576683b4] blur-[215.03px] translate-x-[70%] z-0 rounded-b-[30%]"></div>
       </Fragment>
     );
   }
@@ -191,7 +191,7 @@ const Watch = async ({ params, searchParams }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: videoJsonLd }}
       />
-      <div className="w-full flex flex-col items-center z-10 relative main-responsive top-[106px]">
+      <div className="w-full flex flex-col items-center z-10 relative main-responsive pt-[106px]">
         <div className="w-full max-w-[96rem]">
          <WatchSettingContextProvider>
             <WatchAreaContextProvider MovieInfo={MovieInfo} MovieId={MovieId}>
@@ -210,8 +210,8 @@ const Watch = async ({ params, searchParams }) => {
           </div>
         </div>
       </div>
-      <div className="fixed w-[138.33px] h-[82.25px] left-[1%] top-[2%] bg-[#92b7fc8f] blur-[200px]"></div>
-      <div className="absolute max-[737px]:fixed w-[500px] h-[370.13px] right-[50%] bottom-[-25%] bg-[#576683b4] blur-[215.03px] translate-x-[70%] z-0 rounded-b-[30%]"></div>
+      <div className="fixed pointer-events-none w-[138.33px] h-[82.25px] left-[1%] top-[2%] bg-[#92b7fc8f] blur-[200px]"></div>
+      <div className="absolute max-[737px]:fixed pointer-events-none w-[500px] h-[370.13px] right-[50%] bottom-[-25%] bg-[#576683b4] blur-[215.03px] translate-x-[70%] z-0 rounded-b-[30%]"></div>
     </Fragment>
   );
 };
