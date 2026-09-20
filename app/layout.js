@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/partials/header/Header";
+import Footer from "@/partials/footer/Footer";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserInfoProvider } from "@/context/UserInfoContext";
@@ -86,6 +87,7 @@ export default async function RootLayout({ children }) {
         <UserInfoProvider>
           <Header />
           {children}
+          <Footer />
           <Analytics />
         </UserInfoProvider>
 
