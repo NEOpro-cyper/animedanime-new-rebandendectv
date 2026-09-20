@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+  // Custom output — avoids the node_modules/.prisma resolution issues
+  // with Next.js bundlers (Turbopack/webpack) in this environment.
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String
+  photo         String?
+  banner        String?
+  description   String?
+
+  // XP and Level
+  xp            Int      @default(0)
+  moviesWatched Int      @default(0)
+  episodesWatched Int    @default(0)
+  commentsCount Int      @default(0)
+  threadsCreated Int     @default(0)
+
+  // Settings
+  theme         String   @default("dark")
+  notifyEnabled Boolean  @default(true)
+  adsEnabled    Boolean  @default(true)   // User can toggle ads on/off
+  
+  // Admin
+  isAdmin       Boolean  @default(false)  // Admin flag
+  isBanned      Boolean  @default(false)  // Banned by admin
+  banReason     String?                  // Reason for ban
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  threads       Thread[]
+  replies       ThreadReply[]
+  comments      Comment[]
+  commentReplies CommentReply[]
+  notifications Notification[]
+  watchProgress WatchProgress[]
+  watchlist     Watchlist[]
+  adminReplies  AdminReply[]
+}
+
+// Community Thread
+model Thread {
+  id          String   @id @default(cuid())
+  authorId    String
+  authorName  String
+  authorPhoto String?
+  title       String
+  content     String
+  category    String   @default("general")
+  likes       Int      @default(0)
+  likesUsers  String   @default("") // comma-separated user IDs who liked
+  views       Int      @default(0)
+  replyCount  Int      @default(0)
+  pinned      Boolean  @default(false)
+  locked      Boolean  @default(false)
+  isHidden    Boolean  @default(false) // Admin can hide
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies     ThreadReply[]
+  adminReplies AdminReply[]
+
+  @@index([category])
+  @@index([createdAt])
+}
+
+// Thread Reply
+model ThreadReply {
+  id          String   @id @default(cuid())
+  threadId    String
+  authorId    String
+  authorName  String
+  authorPhoto String?
+  content     String
+  likes       Int      @default(0)
+  likesUsers  String   @default("") // comma-separated user IDs who liked
+  isHidden    Boolean  @default(false) // Admin can hide
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  thread      Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+}
+
+// Movie/TV Comment
+model Comment {
+  id          String   @id @default(cuid())
+  movieId     String
+  authorId    String
+  authorName  String
+  authorPhoto String?
+  content     String
+  likes       Int      @default(0)
+  likesUsers  String   @default("") // comma-separated user IDs who liked
+  replyCount  Int      @default(0)
+  isHidden    Boolean  @default(false) // Admin can hide
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies     CommentReply[]
+  adminReplies AdminReply[]
+
+  @@index([movieId])
+}
+
+// Comment Reply
+model CommentReply {
+  id          String   @id @default(cuid())
+  commentId   String
+  authorId    String
+  authorName  String
+  authorPhoto String?
+  content     String
+  likes       Int      @default(0)
+  likesUsers  String   @default("") // comma-separated user IDs who liked
+  isHidden    Boolean  @default(false) // Admin can hide
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comment     Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([commentId])
+}
+
+// Notification
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String
+  icon      String?
+  read      Boolean  @default(false)
+  data      String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+}
+
+// Watch Progress
+model WatchProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  movieId     String
+  movieTitle  String
+  moviePoster String?
+  movieType   String   @default("movie")
+  season      Int?
+  episode     Int?
+  progress    Float    @default(0)
+  duration    Int      @default(0)
+  updatedAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
+  @@index([userId])
+}
+
+// Watchlist
+model Watchlist {
+  id          String   @id @default(cuid())
+  userId      String
+  movieId     String
+  movieTitle  String
+  moviePoster String?
+  movieType   String   @default("movie")
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
+  @@index([userId])
+}
+
+// Admin Reply — admin can reply to threads and comments
+model AdminReply {
+  id          String   @id @default(cuid())
+  adminId     String
+  adminName   String
+  content     String
+  threadId    String?  // ID of the thread being replied to
+  commentId   String?  // ID of the comment being replied to
+  targetType  String   // "thread" or "comment"
+  isPinned    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  admin       User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  thread      Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  comment     Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+  @@index([commentId])
+  @@index([targetType])
+}
