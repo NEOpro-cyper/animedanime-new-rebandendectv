@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#242735b3] border-t-[1px] border-[#39374b] text-[.9rem] text-[#bac1cd] w-full">
+    <footer className="relative z-20 bg-[#242735b3] border-t-[1px] border-[#39374b] text-[.9rem] text-[#bac1cd] w-full">
       <div className="max-w-[96rem] mx-auto px-6 py-6 flex flex-col gap-4">
 
         {/* Quick links — internal linking for SEO + navigation */}
