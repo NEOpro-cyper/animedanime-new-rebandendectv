@@ -1,14 +1,6 @@
 /**
  * DB connection diagnostic route  ->  GET /api/db-test   (plain JavaScript)
- *
- * Stages: env -> parse -> dns -> tcp -> mysql (raw driver) -> prisma
- *
- * Optional query params:
- *   ?ssl=off   force-disable TLS
- *   ?ssl=on    force-enable TLS (accepts self-signed certs)
- *
  * SECURITY: passwords are redacted, but DELETE THIS FILE when you're done.
- * Requires:  npm i mysql2
  */
 import net from "node:net";
 import dns from "node:dns/promises";
@@ -18,15 +10,8 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 const EXPECTED_TABLES = [
-  "User",
-  "Thread",
-  "ThreadReply",
-  "Comment",
-  "CommentReply",
-  "Notification",
-  "WatchProgress",
-  "Watchlist",
-  "AdminReply",
+  "User", "Thread", "ThreadReply", "Comment", "CommentReply",
+  "Notification", "WatchProgress", "Watchlist", "AdminReply",
 ];
 
 const secrets = [];
