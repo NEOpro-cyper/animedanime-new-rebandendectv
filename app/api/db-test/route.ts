@@ -255,17 +255,12 @@ export async function GET(req) {
   }
   if (!mysqlStep.ok) return finish(steps);
 
-  // 6. prisma  (file lives at app/api/db-test/route.js -> lib is 3 levels up)
+  // 6. prisma - uses the project's own singleton from lib/db.js
   steps.push(
     await run("prisma", async () => {
-      const mod = await import("../../../lib/generated/prisma");
-      const prisma = new mod.PrismaClient();
-      try {
-        const userCount = await prisma.user.count();
-        return { userCount };
-      } finally {
-        await prisma.$disconnect();
-      }
+      const mod = await import("@/lib/db");
+      const userCount = await mod.prisma.user.count();
+      return { userCount };
     })
   );
 
