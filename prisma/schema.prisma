@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql" // MariaDB/MySQL (Coolify) — was "sqlite", which forced file: URLs
   url      = env("DATABASE_URL")
 }
 
@@ -16,9 +16,9 @@ model User {
   email         String   @unique
   password      String
   name          String
-  photo         String?
-  banner        String?
-  description   String?
+  photo         String?  @db.Text
+  banner        String?  @db.Text
+  description   String?  @db.Text
 
   // XP and Level
   xp            Int      @default(0)
@@ -35,7 +35,7 @@ model User {
   // Admin
   isAdmin       Boolean  @default(false)  // Admin flag
   isBanned      Boolean  @default(false)  // Banned by admin
-  banReason     String?                  // Reason for ban
+  banReason     String?  @db.Text         // Reason for ban
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -57,11 +57,11 @@ model Thread {
   authorId    String
   authorName  String
   authorPhoto String?
-  title       String
-  content     String
   category    String   @default("general")
+  title       String   @db.Text
+  content     String   @db.Text
   likes       Int      @default(0)
-  likesUsers  String   @default("") // comma-separated user IDs who liked
+  likesUsers  String   @default("") @db.Text // comma-separated user IDs who liked
   views       Int      @default(0)
   replyCount  Int      @default(0)
   pinned      Boolean  @default(false)
@@ -84,10 +84,10 @@ model ThreadReply {
   threadId    String
   authorId    String
   authorName  String
-  authorPhoto String?
-  content     String
+  authorPhoto String?  @db.Text
+  content     String   @db.Text
   likes       Int      @default(0)
-  likesUsers  String   @default("") // comma-separated user IDs who liked
+  likesUsers  String   @default("") @db.Text // comma-separated user IDs who liked
   isHidden    Boolean  @default(false) // Admin can hide
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -104,10 +104,10 @@ model Comment {
   movieId     String
   authorId    String
   authorName  String
-  authorPhoto String?
-  content     String
+  authorPhoto String?  @db.Text
+  content     String   @db.Text
   likes       Int      @default(0)
-  likesUsers  String   @default("") // comma-separated user IDs who liked
+  likesUsers  String   @default("") @db.Text // comma-separated user IDs who liked
   replyCount  Int      @default(0)
   isHidden    Boolean  @default(false) // Admin can hide
   createdAt   DateTime @default(now())
@@ -126,10 +126,10 @@ model CommentReply {
   commentId   String
   authorId    String
   authorName  String
-  authorPhoto String?
-  content     String
+  authorPhoto String?  @db.Text
+  content     String   @db.Text
   likes       Int      @default(0)
-  likesUsers  String   @default("") // comma-separated user IDs who liked
+  likesUsers  String   @default("") @db.Text // comma-separated user IDs who liked
   isHidden    Boolean  @default(false) // Admin can hide
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -145,11 +145,11 @@ model Notification {
   id        String   @id @default(cuid())
   userId    String
   type      String
-  title     String
-  message   String
-  icon      String?
+  title     String   @db.Text
+  message   String   @db.Text
+  icon      String?  @db.Text
   read      Boolean  @default(false)
-  data      String?
+  data      String?  @db.Text
   createdAt DateTime @default(now())
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -163,8 +163,8 @@ model WatchProgress {
   id          String   @id @default(cuid())
   userId      String
   movieId     String
-  movieTitle  String
-  moviePoster String?
+  movieTitle  String   @db.Text
+  moviePoster String?  @db.Text
   movieType   String   @default("movie")
   season      Int?
   episode     Int?
@@ -183,8 +183,8 @@ model Watchlist {
   id          String   @id @default(cuid())
   userId      String
   movieId     String
-  movieTitle  String
-  moviePoster String?
+  movieTitle  String   @db.Text
+  moviePoster String?  @db.Text
   movieType   String   @default("movie")
   createdAt   DateTime @default(now())
 
@@ -199,7 +199,7 @@ model AdminReply {
   id          String   @id @default(cuid())
   adminId     String
   adminName   String
-  content     String
+  content     String   @db.Text
   threadId    String?  // ID of the thread being replied to
   commentId   String?  // ID of the comment being replied to
   targetType  String   // "thread" or "comment"
