@@ -8,7 +8,7 @@ const nextConfig = {
   compress: true,
 
   // Prisma (and other native/CJS server deps) must not be bundled by Turbopack
-  serverExternalPackages: ["@prisma/client", "prisma", "bcryptjs", "jsonwebtoken", "mysql2"],
+  serverExternalPackages: ["@prisma/client", "prisma", "bcryptjs", "jsonwebtoken"],
 
   // allow the sandbox preview host to load dev assets
   allowedDevOrigins: ["localhost", "space-z.ai", "*.space-z.ai"],
