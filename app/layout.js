@@ -5,7 +5,6 @@ import Footer from "@/partials/footer/Footer";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { UserInfoProvider } from "@/context/UserInfoContext";
-import { Analytics } from "@vercel/analytics/next";
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, SITE_KEYWORDS, absoluteUrl, DEFAULT_OG_IMAGE, THEME_COLOR, websiteJsonLd } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -88,7 +87,6 @@ export default async function RootLayout({ children }) {
           <Header />
           {children}
           <Footer />
-          <Analytics />
         </UserInfoProvider>
 
         <ToastContainer draggable theme="dark" />
