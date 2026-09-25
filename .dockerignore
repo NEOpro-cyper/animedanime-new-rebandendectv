@@ -1,0 +1,26 @@
+# ── Never copy these into the Docker build context ──
+# Shrinks context to a few hundred KB → faster builds, no cache busting.
+
+.git
+.github
+.gitignore
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# env files — Coolify injects env vars at runtime.
+# Build-time values come from Build variables (see Dockerfile ARGs).
+.env
+.env.*
+!.env.example
+
+# local junk
+*.log
+dev.log
+.DS_Store
+lib/generated
+prisma/db
+README.md
