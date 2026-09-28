@@ -14,7 +14,8 @@ const LoginModal = ({ isOpen, onClose }) => {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { userLevel, levelProgress, levelTitle, login, register, logout, userInfo, isUserLoggedIn } = useUserInfoContext();
+  // FIX: pull `loading` (session check) out of the context too
+  const { userLevel, levelProgress, levelTitle, login, register, logout, userInfo, isUserLoggedIn, loading: sessionLoading } = useUserInfoContext();
 
   // Reset view when modal opens
   const handleOpen = (newView) => {
@@ -102,8 +103,24 @@ const LoginModal = ({ isOpen, onClose }) => {
           </button>
 
           <AnimatePresence mode="wait">
+            {/* FIX: while the session check (/api/auth GET) is still running,
+                show a spinner instead of guessing login state. This kills the
+                "logged in but I see the login form on first click" bug. */}
+            {view === "main" && sessionLoading && (
+              <motion.div
+                key="session-loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="p-10 text-center"
+              >
+                <div className="w-8 h-8 border-2 border-slate-600 border-t-blue-500 rounded-full animate-spin mx-auto" />
+                <p className="mt-3 text-sm text-slate-400">Checking your session…</p>
+              </motion.div>
+            )}
+
             {/* Logged in menu */}
-            {view === "main" && isUserLoggedIn && (
+            {view === "main" && isUserLoggedIn && !sessionLoading && (
               <motion.div
                 key="logged-in"
                 initial={{ opacity: 0, x: 0 }}
@@ -115,7 +132,7 @@ const LoginModal = ({ isOpen, onClose }) => {
                   <img
                     src={userInfo?.photo || "/images/logo.png"}
                     alt={userInfo?.name}
-                    className="w-16 h-16 rounded-xl object-cover"
+                    className="w-16 h-16 rounded-xl object-cover shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-semibold text-lg truncate">{userInfo?.name}</p>
@@ -183,7 +200,7 @@ const LoginModal = ({ isOpen, onClose }) => {
             )}
 
             {/* Not logged in - main view */}
-            {view === "main" && !isUserLoggedIn && (
+            {view === "main" && !isUserLoggedIn && !sessionLoading && (
               <motion.div
                 key="auth-main"
                 initial={{ opacity: 0, x: 0 }}
